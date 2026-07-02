@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Phish URL Scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; }
+    input { width: 75%; padding: 10px; }
+    button { padding: 10px 16px; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 16px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Phish URL Scanner</h1>
+  <p>Defensive URL reputation checker using VirusTotal, Spamhaus DBL, SURBL, and local heuristics.</p>
+
+  <input id="url" placeholder="https://example.com/login">
+  <button onclick="scanUrl()">Scan</button>
+
+  <h2>Result</h2>
+  <pre id="result">Submit a URL to begin.</pre>
+
+  <script>
+    async function scanUrl() {
+      const url = document.getElementById("url").value;
+      const result = document.getElementById("result");
+      result.textContent = "Scanning...";
+
+      try {
+        const response = await fetch("/api/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = "Error: " + error;
+      }
+    }
+  </script>
+</body>
+</html>
